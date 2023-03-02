@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  simulationmanager:
+    build:
+      context: .
+      dockerfile: ./SimulationManager/Dockerfile
+      args:
+        INSTALL_LIB: 1
+    network_mode: "host"
+  
+  disreceiver:
+    build:
+      context: .
+      dockerfile: ./Test/Dockerfile
+      args:
+        INSTALL_LIB: 1
+    network_mode: "host"
