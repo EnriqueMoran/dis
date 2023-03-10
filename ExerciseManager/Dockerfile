@@ -9,8 +9,9 @@ ENV PYTHONUNBUFFERED=1
 ARG INSTALL_LIB=${INSTALL_LIB}
 
 WORKDIR /app
-COPY ./Test/requirements.txt .
-COPY ./Test/src .
+COPY ./ExerciseManager/requirements.txt .
+COPY ./ExerciseManager/src .
+COPY ./ExerciseManager/config.ini .
 
 # Install pip requirements
 RUN python -m pip install -r requirements.txt
@@ -20,6 +21,9 @@ COPY open-dis-python-20230223.tar.gz .
 RUN if [ $INSTALL_LIB = 1 ] ; then \
         tar -xzf open-dis-python-20230223.tar.gz ; \
         pip install open-dis-python-master/. ; \
+        apt-get update -y ; \
+        apt-get install x11-xserver-utils -y ; \
+        apt-get install -y python3-tk; \
     fi
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
@@ -31,4 +35,4 @@ USER appuser
 EXPOSE 3000
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-#CMD ["python", "/app/dis_receiver.py"]
+CMD ["python", "/app/main.py"]

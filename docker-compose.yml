@@ -1,14 +1,20 @@
 version: '3.4'
 
 services:
-  simulationmanager:
+  exercisemanager:
     build:
       context: .
-      dockerfile: ./SimulationManager/Dockerfile
+      dockerfile: ./ExerciseManager/Dockerfile
       args:
         INSTALL_LIB: 1
     network_mode: "host"
-  
+    environment:
+      - DISPLAY=$DISPLAY
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      - $HOME/.Xauthority:/tmp/.docker.xauth
+      - /tmp/.X11-unix:/tmp/.X11
+
   disreceiver:
     build:
       context: .
