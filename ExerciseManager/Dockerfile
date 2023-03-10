@@ -11,7 +11,7 @@ ARG INSTALL_LIB=${INSTALL_LIB}
 WORKDIR /app
 COPY ./ExerciseManager/requirements.txt .
 COPY ./ExerciseManager/src .
-COPY ./ExerciseManager/config.ini .
+COPY ./ExerciseManager/cfg .
 
 # Install pip requirements
 RUN python -m pip install -r requirements.txt
