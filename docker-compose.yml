@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+
   exercisemanager:
     build:
       context: .
@@ -14,11 +15,17 @@ services:
     volumes:
       - $HOME/.Xauthority:/tmp/.docker.xauth
       - /tmp/.X11-unix:/tmp/.X11
-
-  disreceiver:
+  
+  tanksimulator:
     build:
       context: .
-      dockerfile: ./Test/Dockerfile
+      dockerfile: ./TankSimulator/Dockerfile
       args:
         INSTALL_LIB: 1
     network_mode: "host"
+    environment:
+      - DISPLAY=$DISPLAY
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      - $HOME/.Xauthority:/tmp/.docker.xauth
+      - /tmp/.X11-unix:/tmp/.X11
