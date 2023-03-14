@@ -27,3 +27,9 @@ if __name__ == "__main__":
     app = MainApp()
     app.run()
     
+    sim_sys = app.systems_manager.simulation_system
+    sim_sys.read_config()
+    sim_sys.listen_to_pdu()
+    
+    if False:
+        test.run_cinematic_tests()
