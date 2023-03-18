@@ -1,5 +1,8 @@
 """This class is responsible for managing all the systems that constitute and define the operation of the tank."""
 
+import threading
+import time
+
 from lib.cinematic import cinematicManager
 from lib.simulation import simulationManager
 
@@ -14,3 +17,27 @@ class SystemsManager:
         self.sensors_system = None
         self.electric_system = None
         self.physic_system = None
+
+        self.exercise_time = 0    # Exercise time in ms
+        self.execution_thread = None
+
+    def __del__(self):
+        if self.execution_thread:
+            self.execution_thread.join()
+    
+    def _simulation_tick(self):
+        simulation_frequency = 1000    # ms
+        while True:
+            if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
+                self.cinematic_system.process_cinematics(simulation_frequency / 1000)
+
+                self.exercise_time += 1
+                time.sleep(simulation_frequency / 1000)
+            elif self.simulation_system.exercise_status == simulationManager.ExerciseStatus.TERMINATED:
+                self.cinematic_system.reset_cinematics()
+                self.exercise_time = 0
+
+    def run(self):
+        self.simulation_system.listen_to_pdu()
+        self.execution_thread = threading.Thread(target=self._simulation_tick)
+        self.execution_thread.start()

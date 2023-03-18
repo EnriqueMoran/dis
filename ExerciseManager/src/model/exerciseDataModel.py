@@ -6,8 +6,6 @@ import lib.exerciseManager as exerciseManager
 
 __author__ = "EnriqueMoran"
 
-logger = logging.getLogger("Main")
-
 class ExerciseDataModel:
     def __init__(self):
         self.exercise_id = 0

@@ -10,8 +10,8 @@ import view.exerciseView as View
 
 __author__ = "EnriqueMoran"
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(message)s',
-                            level=os.environ.get("LOGLEVEL", "INFO"))
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s::%(funcName)s - %(message)s',
+                            level=os.environ.get("LOGLEVEL", "DEBUG"))
 
 logger = logging.getLogger("Main")
 

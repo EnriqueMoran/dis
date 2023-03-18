@@ -3,26 +3,40 @@ import json
 import logging
 import threading
 
+from enum import Enum
+
 from lib.simulation.communication import multicastManager
 from lib.utils.pduFilter import PduFilter
 
-from opendis.PduFactory import createPdu, PduTypeDecoders 
+from opendis.PduFactory import PduTypeDecoders 
 
 __author__ = "EnriqueMoran"
 
-logger = logging.getLogger("Main")
+logger = logging.getLogger("SimulationManager")
+
+class ExerciseStatus(Enum):
+    UNINITIALIZED = 0
+    RUNNING = 1
+    PAUSED = 2
+    TERMINATED = 3
+
+    def to_string(self):
+        return self.name
 
 class SimulationManager:
 
     def __init__(self):
+        self.exercise_time = 0
+        self.exercise_status = ExerciseStatus.UNINITIALIZED
         self.multicast_manager = None
         self.recv_pdu_thread = None
         self.pdu_filter_list = []
-    
+        self.read_config()
+
     def __del__(self):
         if self.recv_pdu_thread:
             self.recv_pdu_thread.join()
-    
+
     def read_config(self):
         """
         Read and process configuration file.
@@ -55,12 +69,19 @@ class SimulationManager:
 
     def on_pdu_received(self, pdu):
         if self.process_pdu(pdu):
+            logger.debug("Processing %s", pdu.__class__.__name__)
             if PduTypeDecoders[pdu.pduType] == PduTypeDecoders[13]:    # PduTypeDecoders.StartResumePdu
-                logger.info("Processing %s:", pdu.__class__.__name__)
+                self.exercise_status = ExerciseStatus.RUNNING
+                logger.info("Simulation Running")
+            elif PduTypeDecoders[pdu.pduType] == PduTypeDecoders[14]:    # PduTypeDecoders.StopFreezePdu
+                logger.debug("frozenBehavior: %d, reason: %d", pdu.frozenBehavior, pdu.reason)
+                if pdu.reason == 2:    # Exercise termination
+                    self.exercise_status = ExerciseStatus.TERMINATED
+                    logger.info("Simulation Terminated")
+                elif pdu.frozenBehavior == 1:    # Stop transmitting PDUs
+                    self.exercise_status = ExerciseStatus.PAUSED
+                    logger.info("Simulation Paused")
 
-                
-    
-    
     def process_pdu(self, pdu):
         """
         Return True if pdu can be processed, False otherwise.
@@ -69,15 +90,11 @@ class SimulationManager:
         pdu_app = pdu.originatingEntityID.applicationID
         pdu_site = pdu.originatingEntityID.siteID
         pdu_filter = PduFilter(pdu_exercise, pdu_app, pdu_site)
+        can_be_processed = pdu_filter in self.pdu_filter_list
         logger.debug("Received PDU (%s) - exercise_id: %d, application_id: %d, site_id: %d",\
                         pdu.__class__.__name__, pdu_exercise, pdu_app,pdu_site)
-        can_be_processed = pdu_filter in self.pdu_filter_list
         if can_be_processed:
-            logger.debug("PDU matches filtered {exercise, application, site}, will be processed.")
+            logger.debug("PDU matches filters, will be processed.")
         else:
-            logger.debug("PDU does not match filtered {exercise, application, site}, won't " + \
-                        "be processed.")
-        return pdu_filter in self.pdu_filter_list
-    
-
-  
+            logger.debug("PDU does not match filters, won't be processed.")
+        return can_be_processed

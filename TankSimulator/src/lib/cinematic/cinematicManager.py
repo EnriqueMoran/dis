@@ -4,6 +4,7 @@ import opendis.RangeCoordinates
 from lib.utils import positionException
 from opendis.RangeCoordinates import rad2deg, deg2rad
 
+__author__ = "EnriqueMoran"
 
 class CinematicManager:
 
@@ -168,3 +169,17 @@ class CinematicManager:
     def get_speed(self):
         """Returns speed in m/s."""
         return math.sqrt(self.speed_x**2 + self.speed_y**2 + self.speed_z**2)
+
+    def process_cinematics(self, dt):
+        """
+        :param dt: Time elapsed since last update in seconds.
+        """
+        dx = self.speed_x * dt
+        dy = self.speed_y * dt
+        self.pos_x += dx
+        self.pos_y += dy
+
+    def reset_cinematics(self):
+        self.pos_x = self.initial_pos_x
+        self.pos_y = self.initial_pos_y
+        self.pos_z = self.initial_pos_z

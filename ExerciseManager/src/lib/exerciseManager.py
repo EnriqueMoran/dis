@@ -12,7 +12,7 @@ from opendis.dis7 import StartResumePdu, StopFreezePdu
 
 __author__ = "EnriqueMoran"
 
-logger = logging.getLogger("Main")
+logger = logging.getLogger("ExerciseManager")
 
 class ExerciseStatus(Enum):
     UNINITIALIZED = 0
@@ -34,6 +34,10 @@ class ExerciseManager():
         self.multicast_manager = multicastManager.MulticastManager()
         self.time_thread = None
         self.time_lock = threading.Lock()
+    
+    def __del__(self):
+        if self.time_thread:
+            self.time_thread.join()
 
     def start_resume_exercise(self) -> None:
         """TBD"""
@@ -43,13 +47,14 @@ class ExerciseManager():
             pdu.originatingEntityID.applicationID = self.application_id
             pdu.originatingEntityID.siteID = self.site_id
             pdu.protocolFamily = 0
-
-            self.multicast_manager.send_pdu(pdu)
+            
             logger.info("StartResumePDU sent to %s:%d - exercise_id: %d, application_id: %d, site_id: %d",\
                         self.multicast_manager.multicast_group, self.multicast_manager.multicast_port,\
                         pdu.exerciseID, pdu.originatingEntityID.applicationID,\
                         pdu.originatingEntityID.siteID)
-        
+            
+            self.multicast_manager.send_pdu(pdu)
+
             with self.time_lock:
                 if self.exercise_status != ExerciseStatus.PAUSED:
                     self.exercise_time = 0
@@ -67,11 +72,13 @@ class ExerciseManager():
             pdu.originatingEntityID.siteID = self.site_id
             pdu.reason = 1
             pdu.frozenBehavior = 1
-            self.multicast_manager.send_pdu(pdu)
+
             logger.info("StopFreezePDU sent to %s:%d - exercise_id: %d, application_id: %d, site_id: %d",\
                         self.multicast_manager.multicast_group, self.multicast_manager.multicast_port,\
                         pdu.exerciseID, pdu.originatingEntityID.applicationID,\
                         pdu.originatingEntityID.siteID)
+            
+            self.multicast_manager.send_pdu(pdu)            
 
             with self.time_lock:
                 self.exercise_status = ExerciseStatus.PAUSED
@@ -88,12 +95,14 @@ class ExerciseManager():
             pdu.originatingEntityID.siteID = self.site_id
             pdu.reason = 2
             pdu.frozenBehavior = 4
-            self.multicast_manager.send_pdu(pdu)
+
             logger.info("StopFreezePDU sent to %s:%d - exercise_id: %d, application_id: %d, site_id: %d",\
                         self.multicast_manager.multicast_group, self.multicast_manager.multicast_port,\
                         pdu.exerciseID, pdu.originatingEntityID.applicationID,\
                         pdu.originatingEntityID.siteID)
-     
+
+            self.multicast_manager.send_pdu(pdu)
+
             with self.time_lock:
                 self.exercise_status = ExerciseStatus.TERMINATED
             if self.time_thread:
