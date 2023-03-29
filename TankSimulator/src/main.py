@@ -6,7 +6,6 @@ import tests
 
 from lib.core import systemsManager
 
-
 __author__ = "EnriqueMoran"
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s::%(funcName)s - %(message)s',
@@ -22,17 +21,11 @@ class MainApp:
     
     def run(self):
         self.systems_manager.run()
-    
-    def _test(self):
-        self.systems_manager.cinematic_system.set_position(36.46887579796468, -6.24444889799417, 0)
-        self.systems_manager.cinematic_system.set_heading(281)
-        self.systems_manager.cinematic_system.set_speed(2.78)
-        self.systems_manager.run()
 
 if __name__ == "__main__":
-    if False:    # Set to True to run unit tests
+    run_test = False    # Set to True to run unit tests
+    if run_test:
         tests.run_cinematic_tests()
-
-    app = MainApp()
-    #app.run()
-    app._test()
+    else:
+        app = MainApp()
+        app.run()

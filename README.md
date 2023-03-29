@@ -1,6 +1,6 @@
 # DIS
 
-Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard. It includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
+Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard (SISO-REF-010-00v20-0, 19 November 2013). It includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
 
 Each simulator and tool is contenerized
 
@@ -24,6 +24,10 @@ Allows to Start, stop, resume and terminate exercises.
 ### Tank Simulator
 
 Simulate generic tank components and basic behaviour.
+
+#### Specific Behavior
+
+- Received PDUs that are not listed in cfg/pdu_filter.json won't be processed.
 
 #### Changelog
 

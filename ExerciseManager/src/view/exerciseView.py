@@ -8,7 +8,6 @@ class ExerciseView:
         self.root = tk.Tk()
         self.root.title("Exercise Manager")
         self.root.geometry("800x600")
-        self.root.configure(bg="white")
 
         self.title_label = ttk.Label(self.root, text="Exercise Manager")
         self.title_label.pack(side=tk.TOP, pady=40)

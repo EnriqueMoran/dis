@@ -23,6 +23,7 @@ class MulticastManager:
         """TBD"""
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, self.ttl)
+        self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 0)
         # self.sock.setsockopt(socket.SOL_SOCKET, socket.IP_MULTICAST_TTL, self.ttl)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF,
                               socket.inet_aton(self.multicast_iface))

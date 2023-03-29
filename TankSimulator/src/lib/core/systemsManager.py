@@ -4,14 +4,17 @@ import threading
 import time
 
 from lib.cinematic import cinematicManager
+from lib.entity import entityManager
+from lib.fuel import fuelManager
 from lib.simulation import simulationManager
 
 class SystemsManager:
 
     def __init__(self):
-        self.simulation_system = simulationManager.SimulationManager()
+        self.entity_system = entityManager.EntityManager()
+        self.fuel_system = fuelManager.FuelManager()
         self.cinematic_system = cinematicManager.CinematicManager()
-        self.fuel_system = None
+        self.simulation_system = simulationManager.SimulationManager(self.cinematic_system)
         self.weapon_system = None
         self.comm_system = None
         self.sensors_system = None
@@ -29,13 +32,24 @@ class SystemsManager:
         simulation_frequency = 1000    # ms
         while True:
             if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
-                self.cinematic_system.process_cinematics(simulation_frequency / 1000)
+                self._process_movement(simulation_frequency)
+
+                print(f"Current pos: {self.cinematic_system.get_position()[0]}, {self.cinematic_system.get_position()[1]}, {self.cinematic_system.get_position()[2]}")
+                print(f"Current speed: " + str(self.cinematic_system.get_speed()))
+                print(f"Current heading: " + str(self.cinematic_system.get_heading()))
+                print("Current fuel: " + str(self.fuel_system.engine_fuel.fuelQuantity) + "\n")
 
                 self.exercise_time += 1
                 time.sleep(simulation_frequency / 1000)
             elif self.simulation_system.exercise_status == simulationManager.ExerciseStatus.TERMINATED:
-                self.cinematic_system.reset_cinematics()
+                self.entity_system.reset_data()
+                self.fuel_system.reset_fuel()
                 self.exercise_time = 0
+    
+    def _process_movement(self, simulation_frequency):
+        if self.fuel_system.engine_fuel.fuelQuantity > 0:
+            distance_traveled = self.cinematic_system.process_cinematics(simulation_frequency / 1000)
+            self.fuel_system.process_fuel_consumption(distance_traveled)
 
     def run(self):
         self.simulation_system.listen_to_pdu()

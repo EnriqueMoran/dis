@@ -20,7 +20,7 @@ class ExerciseDataModel:
     
     def read_config(self):
         """TBD"""
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(inline_comment_prefixes=";")
         config.read("config.ini")
 
         self.exercise_id = int(config.get("IDENTITY", 'exercise_id'))
