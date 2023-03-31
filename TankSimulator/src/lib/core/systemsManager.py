@@ -34,10 +34,8 @@ class SystemsManager:
             if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
                 self._process_movement(simulation_frequency)
 
-                print(f"Current pos: {self.cinematic_system.get_position()[0]}, {self.cinematic_system.get_position()[1]}, {self.cinematic_system.get_position()[2]}")
-                print(f"Current speed: " + str(self.cinematic_system.get_speed()))
-                print(f"Current heading: " + str(self.cinematic_system.get_heading()))
-                print("Current fuel: " + str(self.fuel_system.engine_fuel.fuelQuantity) + "\n")
+                #print(self.cinematic_system.get_information())
+                #print("Current fuel: " + str(self.fuel_system.engine_fuel.fuelQuantity))
 
                 self.exercise_time += 1
                 time.sleep(simulation_frequency / 1000)

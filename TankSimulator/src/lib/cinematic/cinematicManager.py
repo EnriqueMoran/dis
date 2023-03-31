@@ -3,7 +3,6 @@ import opendis.RangeCoordinates
 
 from lib.entity import entityManager
 
-from lib.utils import positionException
 from opendis.RangeCoordinates import rad2deg, deg2rad
 from opendis.dis7 import Vector3Float, Vector3Double, EulerAngles
 
@@ -29,7 +28,7 @@ class CinematicManager:
         return  f"current position: {current_lat}, {current_lon}\n" +\
                 f"current altitude: {current_alt} m\n" +\
                 f"heading: {heading} degrees\n" +\
-                f"speed: {speed} m/s\n"
+                f"speed: {speed} m/s"
     
     def set_position(self, lat, lon, alt=None):
         """
@@ -114,16 +113,26 @@ class CinematicManager:
     def process_cinematics(self, dt):
         """
         :param dt: Time elapsed since last update in seconds.
+        Does not calculate new Altitude.
 
         Return traveled distance in meters.
         """
-        current_location = location = entityManager.EntityManager().get_entity_location()
-        new_location = Vector3Double()
-        speed = entityManager.EntityManager().get_entity_linear_velocity()
-        dx = speed.x * dt
-        dy = speed.y * dt
-        new_location.x = current_location.x + dx
-        new_location.y = current_location.y + dy
-        new_location.z = current_location.z
-        entityManager.EntityManager().set_entity_location(new_location)
-        return math.sqrt(dx**2 + dy**2)
+        lat_d, lon_d, alt = self.get_lat_lon_alt()
+        current_lat = deg2rad(lat_d)
+        current_lon = deg2rad(lon_d)
+        heading = deg2rad(self.get_heading())
+        speed = self.get_speed()
+
+        distance = deg2rad((speed * dt) / (opendis.RangeCoordinates.WGS84().a))
+        new_lat = math.asin(math.sin(current_lat) * math.cos(distance) + math.cos(current_lat) * \
+                            math.sin(distance) * math.cos(heading))
+        new_lon = current_lon + math.atan2(math.sin(heading) * math.sin(distance) * \
+                                           math.cos(current_lat), math.cos(distance) - \
+                                           math.sin(current_lat) * math.sin(new_lat))
+
+        gps = opendis.RangeCoordinates.GPS()
+        location = Vector3Double() 
+        location.x, location.y, location.z = gps.lla2ecef([rad2deg(new_lat), rad2deg(new_lon), alt])
+        entityManager.EntityManager().set_entity_location(location)
+
+        return (speed * dt)

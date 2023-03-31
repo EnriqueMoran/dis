@@ -127,7 +127,6 @@ class SimulationManager:
                     entityManager.EntityManager().set_data(pdu)
                     self._data_initialized = True
 
-
     def can_process_pdu(self, pdu):
         """
         Return True if pdu can be processed, False otherwise.
@@ -173,48 +172,47 @@ class SimulationManager:
         pdu.numberOfVariableParameters = entity_system.get_number_of_variable_parameters()
         pdu.variableParameters = entity_system.get_variable_parameters()
 
-        log_message = "\t"*11 + f"exerciseID: {pdu.exerciseID}, \n"+"\t"*12 + \
-                      f"siteID: {pdu.entityID.siteID}, \n"+"\t"*12 + \
-                      f"applicationID: {pdu.entityID.applicationID}, \n"+"\t"*12 + \
-                      f"timestamp: {pdu.timestamp}, \n"+"\t"*12 + \
-                      f"capabilities: {pdu.capabilities}, \n"+"\t"*12 + \
-                      f"deadReckoningParameters: \n"+"\t"*13 + \
-                      f"deadReckoningAlgorithm: {pdu.deadReckoningParameters.deadReckoningAlgorithm}, \n"+"\t"*13 + \
-                      f"parameters: {pdu.deadReckoningParameters.parameters}, \n"+"\t"*13 + \
-                      f"entityLinearAcceleration: \n"+"\t"*14 + \
-                      f"x: {pdu.deadReckoningParameters.entityLinearAcceleration.x}, \n"+"\t"*14 + \
-                      f"y: {pdu.deadReckoningParameters.entityLinearAcceleration.y}, \n"+"\t"*14 + \
-                      f"z: {pdu.deadReckoningParameters.entityLinearAcceleration.z} \n"+"\t"*13 + \
-                      f"entityAngularVelocity: \n"+"\t"*14 + \
-                      f"x: {pdu.deadReckoningParameters.entityAngularVelocity.x}, \n"+"\t"*14 + \
-                      f"y: {pdu.deadReckoningParameters.entityAngularVelocity.y}, \n"+"\t"*14 + \
-                      f"z: {pdu.deadReckoningParameters.entityAngularVelocity.z} \n"+"\t"*12 + \
-                      f"entityAppearance: {pdu.entityAppearance}, \n"+"\t"*12 + \
-                      f"entityID: {pdu.entityID.entityID}, \n"+"\t"*12 + \
-                      f"entityLinearVelocity: \n"+"\t"*13 + \
-                      f"x: {pdu.entityLinearVelocity.x}, \n"+"\t"*13 + \
-                      f"y: {pdu.entityLinearVelocity.y}, \n"+"\t"*13 + \
-                      f"z: {pdu.entityLinearVelocity.z} \n"+"\t"*12 + \
-                      f"entityLocation: \n"+"\t"*13 + \
-                      f"x: {pdu.entityLocation.x}, \n"+"\t"*13 + \
-                      f"y: {pdu.entityLocation.y}, \n"+"\t"*13 + \
-                      f"z: {pdu.entityLocation.z} \n"+"\t"*12 + \
-                      f"entityOrientation:\n"+"\t"*13 + \
-                      f"psi: {pdu.entityOrientation.psi}, \n"+"\t"*13 + \
-                      f"theta: {pdu.entityOrientation.theta}, \n"+"\t"*13 + \
-                      f"phi: {pdu.entityOrientation.phi} \n"+"\t"*12 + \
-                      f"entityType: \n"+"\t"*13 + \
-                      f"entityKind : {pdu.entityType.entityKind}, \n"+"\t"*13 + \
-                      f"domain : {pdu.entityType.domain}, \n"+"\t"*13 + \
-                      f"country : {pdu.entityType.country}, \n"+"\t"*13 + \
-                      f"category : {pdu.entityType.category}, \n"+"\t"*13 + \
-                      f"subcategory : {pdu.entityType.subcategory}, \n"+"\t"*13 + \
-                      f"specific : {pdu.entityType.specific}, \n"+"\t"*13 + \
-                      f"extra : {pdu.entityType.extra}, \n"+"\t"*13 + \
-                      f"forceId: {pdu.forceId}, \n"+"\t"*12 + \
-                      f"marking: {pdu.marking.characters}, \n"+"\t"*12 + \
-                      f"numberOfVariableParameters: {pdu.numberOfVariableParameters}, \n"+"\t"*12 + \
+        log_message = "\t"*1 + f"exerciseID: {pdu.exerciseID} \n"+"\t"*1 + \
+                      f"siteID: {pdu.entityID.siteID} \n"+"\t"*1 + \
+                      f"applicationID: {pdu.entityID.applicationID} \n"+"\t"*1 + \
+                      f"entityID: {pdu.entityID.entityID} \n"+"\t"*1 + \
+                      f"timestamp: {pdu.timestamp} \n"+"\t"*1 + \
+                      f"capabilities: {pdu.capabilities} \n"+"\t"*1 + \
+                      f"deadReckoningParameters: \n"+"\t"*2 + \
+                      f"deadReckoningAlgorithm: {pdu.deadReckoningParameters.deadReckoningAlgorithm} \n"+"\t"*2 + \
+                      f"parameters: {pdu.deadReckoningParameters.parameters} \n"+"\t"*1 + \
+                      f"entityLinearAcceleration: \n"+"\t"*2 + \
+                      f"x: {pdu.deadReckoningParameters.entityLinearAcceleration.x} \n"+"\t"*2 + \
+                      f"y: {pdu.deadReckoningParameters.entityLinearAcceleration.y} \n"+"\t"*2 + \
+                      f"z: {pdu.deadReckoningParameters.entityLinearAcceleration.z} \n"+"\t"*1 + \
+                      f"entityAngularVelocity: \n"+"\t"*2 + \
+                      f"x: {pdu.deadReckoningParameters.entityAngularVelocity.x} \n"+"\t"*2 + \
+                      f"y: {pdu.deadReckoningParameters.entityAngularVelocity.y} \n"+"\t"*2 + \
+                      f"z: {pdu.deadReckoningParameters.entityAngularVelocity.z} \n"+"\t"*1 + \
+                      f"entityAppearance: {pdu.entityAppearance} \n"+"\t"*1 + \
+                      f"entityLinearVelocity: \n"+"\t"*2 + \
+                      f"x: {pdu.entityLinearVelocity.x} \n"+"\t"*2 + \
+                      f"y: {pdu.entityLinearVelocity.y} \n"+"\t"*2 + \
+                      f"z: {pdu.entityLinearVelocity.z} \n"+"\t"*1 + \
+                      f"entityLocation: \n"+"\t"*2 + \
+                      f"x: {pdu.entityLocation.x} \n"+"\t"*2 + \
+                      f"y: {pdu.entityLocation.y} \n"+"\t"*2 + \
+                      f"z: {pdu.entityLocation.z} \n"+"\t"*1 + \
+                      f"entityOrientation: \n"+"\t"*2 + \
+                      f"psi: {pdu.entityOrientation.psi} \n"+"\t"*2 + \
+                      f"theta: {pdu.entityOrientation.theta} \n"+"\t"*2 + \
+                      f"phi: {pdu.entityOrientation.phi} \n"+"\t"*1 + \
+                      f"entityType: \n"+"\t"*1 + \
+                      f"entityKind : {pdu.entityType.entityKind} \n"+"\t"*2 + \
+                      f"domain : {pdu.entityType.domain} \n"+"\t"*2 + \
+                      f"country : {pdu.entityType.country} \n"+"\t"*2 + \
+                      f"category : {pdu.entityType.category} \n"+"\t"*2 + \
+                      f"subcategory : {pdu.entityType.subcategory} \n"+"\t"*2 + \
+                      f"specific : {pdu.entityType.specific} \n"+"\t"*2 + \
+                      f"extra : {pdu.entityType.extra} \n"+"\t"*1 + \
+                      f"forceId: {pdu.forceId} \n"+"\t"*1 + \
+                      f"marking: {pdu.marking.characters} \n"+"\t"*2 + \
+                      f"numberOfVariableParameters: {pdu.numberOfVariableParameters} \n"+"\t"*2 + \
                       f"variableParameters: {pdu.variableParameters}"
-        logger.debug("EntityStatePDU sent: \n\t" + log_message)  # TODO REMOVE
         self.multicast_manager.send_pdu(pdu)
-        #logger.debug("EntityStatePDU sent: \n%s" + log_message)
+        logger.debug("EntityStatePDU sent: \n%s", log_message)
