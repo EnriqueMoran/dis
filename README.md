@@ -1,8 +1,8 @@
 # DIS
 
-Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard (SISO-REF-010-00v20-0, 19 November 2013). It includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
+Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard (*SISO-REF-010-00v20-0, 19 November 2013*). Includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
 
-Each simulator and tool is contenerized
+Each simulator and tool is contenerized.
 
 ## Components
 
@@ -27,7 +27,9 @@ Simulate generic tank components and basic behaviour.
 
 #### Specific Behavior
 
-- Received PDUs that are not listed in cfg/pdu_filter.json won't be processed.
+- Received PDUs with fields *exerciseID*, *applicationID* and *siteID* that are not listed in *cfg/pdu_filter.json* won't be processed.
+  
+- This simulator will set the inicial navigation values (position, heading, speed, etc) once a valid EntityStatePDU referencing the own tank is received (an processed), this means a ESPDU cointaing the same value of entityID as configured.
 
 #### Changelog
 
