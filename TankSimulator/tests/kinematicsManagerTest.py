@@ -4,13 +4,13 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from lib.utils import positionException
-from lib.cinematic.cinematicManager import CinematicManager
+from lib.kinematics.kinematicsManager import KinematicsManager
 
 from opendis.RangeCoordinates import GPS, rad2deg
 
-class TestCinematicManager(unittest.TestCase):
+class TestKinematicsManager(unittest.TestCase):
     def setUp(self):
-        self.c_manager = CinematicManager()
+        self.c_manager = KinematicsManager()
 
     def test_set_position(self):
         self.setUp()

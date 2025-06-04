@@ -3,7 +3,7 @@
 import threading
 import time
 
-from lib.cinematic import cinematicManager
+from lib.kinematics import kinematicsManager
 from lib.entity import entityManager
 from lib.fuel import fuelManager
 from lib.simulation import simulationManager
@@ -13,8 +13,8 @@ class SystemsManager:
     def __init__(self):
         self.entity_system = entityManager.EntityManager()
         self.fuel_system = fuelManager.FuelManager()
-        self.cinematic_system = cinematicManager.CinematicManager()
-        self.simulation_system = simulationManager.SimulationManager(self.cinematic_system)
+        self.kinematics_system = kinematicsManager.KinematicsManager()
+        self.simulation_system = simulationManager.SimulationManager(self.kinematics_system)
         self.weapon_system = None
         self.comm_system = None
         self.sensors_system = None
@@ -34,7 +34,7 @@ class SystemsManager:
             if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
                 self._process_movement(simulation_frequency)
 
-                #print(self.cinematic_system.get_information())
+                #print(self.kinematics_system.get_information())
                 #print("Current fuel: " + str(self.fuel_system.engine_fuel.fuelQuantity))
 
                 self.exercise_time += 1
@@ -46,7 +46,7 @@ class SystemsManager:
     
     def _process_movement(self, simulation_frequency):
         if self.fuel_system.engine_fuel.fuelQuantity > 0:
-            distance_traveled = self.cinematic_system.process_cinematics(simulation_frequency / 1000)
+            distance_traveled = self.kinematics_system.process_kinematics(simulation_frequency / 1000)
             self.fuel_system.process_fuel_consumption(distance_traveled)
 
     def run(self):

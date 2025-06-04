@@ -25,7 +25,7 @@ class MainApp:
 if __name__ == "__main__":
     run_test = False    # Set to True to run unit tests
     if run_test:
-        tests.run_cinematic_tests()
+        tests.run_kinematics_tests()
     else:
         app = MainApp()
         app.run()
