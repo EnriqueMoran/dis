@@ -8,7 +8,7 @@ from opendis.dis7 import Vector3Float, Vector3Double, EulerAngles
 
 __author__ = "EnriqueMoran"
 
-class CinematicManager:
+class KinematicsManager:
 
     def __init__(self):
         orientation = EulerAngles()    # Set valid 0, 0, 0 orientation
@@ -110,7 +110,7 @@ class CinematicManager:
         speed = entityManager.EntityManager().get_entity_linear_velocity()
         return math.sqrt(speed.x**2 + speed.y**2 + speed.z**2)
 
-    def process_cinematics(self, dt):
+    def process_kinematics(self, dt):
         """
         :param dt: Time elapsed since last update in seconds.
         Does not calculate new Altitude.

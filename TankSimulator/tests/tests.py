@@ -1,7 +1,7 @@
-import cinematicManagerTest
+import kinematicsManagerTest
 
-def run_cinematic_tests():
-    test = cinematicManagerTest.TestCinematicManager()
+def run_kinematics_tests():
+    test = kinematicsManagerTest.TestKinematicsManager()
     test.test_set_position()
     print("Set position tests passed. OK")
     test.test_set_heading()

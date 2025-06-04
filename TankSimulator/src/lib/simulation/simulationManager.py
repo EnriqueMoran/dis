@@ -30,7 +30,7 @@ class ExerciseStatus(Enum):
 
 class SimulationManager:
 
-    def __init__(self, cinematic_system=None):
+    def __init__(self, kinematics_system=None):
         self.exercise_time = 0
         self.exercise_status = ExerciseStatus.UNINITIALIZED
         self.multicast_manager = None
@@ -42,7 +42,7 @@ class SimulationManager:
         self.site_id = 0
         self.entity_id = 0
         self.pdu_filter_list = []
-        self.cinematic_system = cinematic_system
+        self.kinematics_system = kinematics_system
         self._data_initialized = False    # Set to True when received ESPDU for the first time
         self.read_config()
         self.listen_to_pdu()
