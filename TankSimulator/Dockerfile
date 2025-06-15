@@ -9,6 +9,8 @@ ENV PYTHONUNBUFFERED=1
 ARG INSTALL_LIB=${INSTALL_LIB}
 
 WORKDIR /app
+ENV LOG_DIR=/app/logs
+RUN mkdir -p $LOG_DIR
 COPY ./TankSimulator/requirements.txt .
 COPY ./TankSimulator/src .
 COPY ./TankSimulator/cfg .

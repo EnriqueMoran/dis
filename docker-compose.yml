@@ -13,6 +13,7 @@ services:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./logs:/app/logs
 
   tanksimulator:
     build:
@@ -25,4 +26,5 @@ services:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./logs:/app/logs
 
