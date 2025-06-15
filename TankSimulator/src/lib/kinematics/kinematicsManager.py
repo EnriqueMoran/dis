@@ -12,9 +12,9 @@ class KinematicsManager:
 
     def __init__(self):
         orientation = EulerAngles()    # Set valid 0, 0, 0 orientation
-        orientation.psi = -3.141592653489793
+        orientation.psi   = -3.141592653489793
         orientation.theta = -1.5707963266948965
-        orientation.phi = 3.141592653589793
+        orientation.phi   = 3.141592653589793
         entityManager.EntityManager().set_entity_orientation(orientation)
 
     def get_information(self):
@@ -24,7 +24,7 @@ class KinematicsManager:
         gps = opendis.RangeCoordinates.GPS()
         current_lat, current_lon, current_alt = self.get_lat_lon_alt()
         heading = self.get_heading()
-        speed = self.get_speed()
+        speed   = self.get_speed()
         return  f"current position: {current_lat}, {current_lon}\n" +\
                 f"current altitude: {current_alt} m\n" +\
                 f"heading: {heading} degrees\n" +\
@@ -42,7 +42,7 @@ class KinematicsManager:
 
         gps = opendis.RangeCoordinates.GPS()
         location = Vector3Float() 
-        location.x, location.y, location.z = gps.lla2ecef([deg2rad(lat), deg2rad(lon), alt])
+        location.x, location.y, location.z = gps.lla2ecef([lat, lon, alt])
         entityManager.EntityManager().set_entity_location(location)
 
     def set_speed(self, speed):
@@ -52,8 +52,8 @@ class KinematicsManager:
         :param speed: Speed in meters per second.
         """
         heading_rad = deg2rad(self.get_heading())
-        pitch_rad = deg2rad(self.get_roll_pitch_yaw()[1])
-        velocity = Vector3Float()
+        pitch_rad   = deg2rad(self.get_roll_pitch_yaw()[1])
+        velocity   = Vector3Float()
         velocity.x = speed * math.cos(heading_rad) * math.cos(pitch_rad)
         velocity.y = speed * math.sin(heading_rad) * math.cos(pitch_rad)
         velocity.z = speed * math.sin(pitch_rad)
@@ -67,7 +67,7 @@ class KinematicsManager:
         """
         gps = opendis.RangeCoordinates.GPS()
 
-        location = entityManager.EntityManager().get_entity_location()
+        location    = entityManager.EntityManager().get_entity_location()
         orientation = entityManager.EntityManager().get_entity_orientation()
         lat, lon, alt, roll, pitch, _ = gps.ecef2llarpy(location.x, location.y, location.z,
                                                         orientation.psi, orientation.theta,
@@ -78,7 +78,7 @@ class KinematicsManager:
         entityManager.EntityManager().set_entity_orientation(orientation)
 
     def get_lat_lon_alt(self):
-        """Return a vector containing lat, lon and altitude in decimal degrees.
+        """Return a vector containing lat, lon and altitude in decimal degrees and meters.
         Note that X, Y, Z can't be 0,0,0."""
         gps = opendis.RangeCoordinates.GPS()
         location = entityManager.EntityManager().get_entity_location()
@@ -87,7 +87,7 @@ class KinematicsManager:
     def get_heading(self):
         """Return heading in degrees."""
         gps = opendis.RangeCoordinates.GPS()
-        location = entityManager.EntityManager().get_entity_location()
+        location    = entityManager.EntityManager().get_entity_location()
         orientation = entityManager.EntityManager().get_entity_orientation()
         yaw = gps.ecef2llarpy(location.x, location.y, location.z,
                               orientation.psi, orientation.theta, orientation.phi)[5]
@@ -99,7 +99,7 @@ class KinematicsManager:
         """Return a vector containing roll, pitch and yaw in decimal degrees.
         Note that X, Y, Z can't be 0,0,0."""
         gps = opendis.RangeCoordinates.GPS()
-        location = entityManager.EntityManager().get_entity_location()
+        location    = entityManager.EntityManager().get_entity_location()
         orientation = entityManager.EntityManager().get_entity_orientation()
         roll, pitch, yaw = gps.ecef2llarpy(location.x, location.y, location.z,
                                            orientation.psi, orientation.theta, orientation.phi)[3:]
@@ -121,9 +121,9 @@ class KinematicsManager:
         current_lat = deg2rad(lat_d)
         current_lon = deg2rad(lon_d)
         heading = deg2rad(self.get_heading())
-        speed = self.get_speed()
+        speed   = self.get_speed()
 
-        distance = deg2rad((speed * dt) / (opendis.RangeCoordinates.WGS84().a))
+        distance = (speed * dt) / (opendis.RangeCoordinates.WGS84().a)
         new_lat = math.asin(math.sin(current_lat) * math.cos(distance) + math.cos(current_lat) * \
                             math.sin(distance) * math.cos(heading))
         new_lon = current_lon + math.atan2(math.sin(heading) * math.sin(distance) * \

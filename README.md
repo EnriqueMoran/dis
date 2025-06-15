@@ -2,7 +2,7 @@
 
 Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard (*SISO-REF-010-00v20-0, 19 November 2013*). Includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
 
-Each simulator and tool is contenerized.
+Each simulator and tool is dockerized.
 
 ## Components
 

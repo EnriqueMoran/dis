@@ -10,12 +10,10 @@ services:
         INSTALL_LIB: 1
     network_mode: "host"
     environment:
-      - DISPLAY=$DISPLAY
-      - XAUTHORITY=/tmp/.docker.xauth
+      - DISPLAY=${DISPLAY}
     volumes:
-      - $HOME/.Xauthority:/tmp/.docker.xauth
-      - /tmp/.X11-unix:/tmp/.X11
-  
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
   tanksimulator:
     build:
       context: .
@@ -24,8 +22,7 @@ services:
         INSTALL_LIB: 1
     network_mode: "host"
     environment:
-      - DISPLAY=$DISPLAY
-      - XAUTHORITY=/tmp/.docker.xauth
+      - DISPLAY=${DISPLAY}
     volumes:
-      - $HOME/.Xauthority:/tmp/.docker.xauth
-      - /tmp/.X11-unix:/tmp/.X11
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
