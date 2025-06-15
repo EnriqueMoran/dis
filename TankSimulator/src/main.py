@@ -8,8 +8,16 @@ from lib.core import systemsManager
 
 __author__ = "EnriqueMoran"
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s::%(funcName)s - %(message)s',
-                            level=os.environ.get("LOGLEVEL", "DEBUG"))
+log_dir = os.environ.get("LOG_DIR", os.path.join(os.path.dirname(__file__), "logs"))
+os.makedirs(log_dir, exist_ok=True)
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(name)s::%(funcName)s - %(message)s',
+    level=os.environ.get("LOGLEVEL", "DEBUG"),
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(os.path.join(log_dir, "tanksimulator.log"), mode="a")
+    ],
+)
 
 logger = logging.getLogger("Main")
 
