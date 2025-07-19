@@ -1,7 +1,7 @@
 import math
 import opendis.RangeCoordinates
 
-from lib.entity import entityManager
+from lib.entity.entityManager import EntityManager
 
 from opendis.RangeCoordinates import rad2deg, deg2rad
 from opendis.dis7 import Vector3Float, Vector3Double, EulerAngles
@@ -11,12 +11,14 @@ __author__ = "EnriqueMoran"
 class KinematicsManager:
 
     def __init__(self):
-        orientation = EulerAngles()    # Set valid 0, 0, 0 orientation
-        orientation.psi   = -3.141592653489793
-        orientation.theta = -1.5707963266948965
-        orientation.phi   = 3.141592653589793
-        entityManager.EntityManager().set_entity_orientation(orientation)
+        self._gps   = opendis.RangeCoordinates.GPS()
+        self._wgs84 = opendis.RangeCoordinates.WGS84()
 
+        lat, lon, alt   = 36.988138186019235, -7.9387833418066025, 0.0
+        roll, pitch, yaw  = 0.0, 0.0, 0.0
+        self.set_position(lat, lon, alt)
+        self.set_orientation(roll, pitch, yaw)
+        
     def get_information(self):
         """TBD
         Note that X, Y, Z can't be 0,0,0.
@@ -29,110 +31,135 @@ class KinematicsManager:
                 f"current altitude: {current_alt} m\n" +\
                 f"heading: {heading} degrees\n" +\
                 f"speed: {speed} m/s"
-    
-    def set_position(self, lat, lon, alt=None):
+
+    def set_orientation(self, roll:float, pitch:float, yaw:float):
         """
-        Set current position.
+        Set entity orientation in EulerAngles.
         
-        :param lat: Latitude in decimal degrees
-        :param lon: Longitude in decimal degrees
-        :param alt: Altitude in meters
+        :param roll_deg: Roll (bank) in decimal degrees (body-local).
+        :param pitch_deg: Pitch (elevation) in decimal degrees (body-local).
+        :param yaw_deg: Yaw (heading) in decimal degrees (body-local).
         """
-        alt = self.get_lat_lon_alt()[2] if alt is None else alt
+        orientation = EulerAngles()
+        orientation.phi   = math.radians(roll)
+        orientation.theta = math.radians(pitch)
+        orientation.psi   = math.radians(yaw)
+        EntityManager().set_entity_orientation(orientation)
+    
+    def set_position(self, lat:float, lon:float, alt:float):
+        """
+        Set entity position (geodetic -> ECEF).
+        
+        :param lat: Latitude in decimal degrees (geodetic).
+        :param lon: Longitude in decimal degrees (geodetic).
+        :param alt: Altitude in meters.
+        """
+        location = Vector3Double()    # Use double precision to preserve altitude accuracy
+        location.x, location.y, location.z = self._gps.lla2ecef([lat, lon, alt])
+        EntityManager().set_entity_location(location)
 
-        gps = opendis.RangeCoordinates.GPS()
-        location = Vector3Float() 
-        location.x, location.y, location.z = gps.lla2ecef([lat, lon, alt])
-        entityManager.EntityManager().set_entity_location(location)
-
-    def set_speed(self, speed):
+    def set_speed(self, speed:float):
         """"
-        Set speed.
+        Set local NED speed and convert to ECEF.
 
         :param speed: Speed in meters per second.
         """
-        heading_rad = deg2rad(self.get_heading())
-        pitch_rad   = deg2rad(self.get_roll_pitch_yaw()[1])
-        velocity   = Vector3Float()
-        velocity.x = speed * math.cos(heading_rad) * math.cos(pitch_rad)
-        velocity.y = speed * math.sin(heading_rad) * math.cos(pitch_rad)
-        velocity.z = speed * math.sin(pitch_rad)
-        entityManager.EntityManager().set_entity_linear_velocity(velocity)
+        orientation = EntityManager().get_entity_orientation()
+        heading_rad = orientation.psi
+        pitch_rad   = orientation.theta
+
+        # Compute NED velocity components
+        v_n =  speed * math.cos(pitch_rad) * math.cos(heading_rad)
+        v_e =  speed * math.cos(pitch_rad) * math.sin(heading_rad)
+        v_d = -speed * math.sin(pitch_rad)    # Down positive
+
+        # Convert NED to ECEF
+        location = EntityManager().get_entity_location()
+        vx, vy, vz = self._gps.ned2ecef([v_n, v_e, v_d], [location.x, location.y, location.z])
+        vx = vx - location.x
+        vy = vy - location.y
+        vz = vz - location.z
+        velocity = Vector3Float()
+        velocity.x, velocity.y, velocity.z = vx, vy, vz
+        EntityManager().set_entity_linear_velocity(velocity)
     
-    def set_heading(self, heading):
+    def set_heading(self, heading:float):
         """
-        Set heading.
+        Update entity heading (yaw only).
 
-        :param heading: Heading in degrees.
+        :param heading: Heading in decimal degrees.
         """
-        gps = opendis.RangeCoordinates.GPS()
+        orientation = EntityManager().get_entity_orientation()
+        orientation.psi = math.radians(heading)
+        EntityManager().set_entity_orientation(orientation)
 
-        location    = entityManager.EntityManager().get_entity_location()
-        orientation = entityManager.EntityManager().get_entity_orientation()
-        lat, lon, alt, roll, pitch, _ = gps.ecef2llarpy(location.x, location.y, location.z,
-                                                        orientation.psi, orientation.theta,
-                                                        orientation.phi)
-        yaw = deg2rad(heading)
-        orientation.psi, orientation.theta, orientation.phi = gps.llarpy2ecef(lat, lon, alt,
-                                                                              roll, pitch, yaw)[3:]
-        entityManager.EntityManager().set_entity_orientation(orientation)
+    def get_lat_lon_alt(self) -> tuple:
+        """Get entity geodetic position from ECEF.
 
-    def get_lat_lon_alt(self):
-        """Return a vector containing lat, lon and altitude in decimal degrees and meters.
-        Note that X, Y, Z can't be 0,0,0."""
-        gps = opendis.RangeCoordinates.GPS()
-        location = entityManager.EntityManager().get_entity_location()
-        return gps.ecef2lla([location.x, location.y, location.z])
+        :return: (lat_deg, lon_deg, alt_m).
+        """
+        location = EntityManager().get_entity_location()
+        return self._gps.ecef2lla([location.x, location.y, location.z])
     
-    def get_heading(self):
-        """Return heading in degrees."""
-        gps = opendis.RangeCoordinates.GPS()
-        location    = entityManager.EntityManager().get_entity_location()
-        orientation = entityManager.EntityManager().get_entity_orientation()
-        yaw = gps.ecef2llarpy(location.x, location.y, location.z,
-                              orientation.psi, orientation.theta, orientation.phi)[5]
-        heading = rad2deg(yaw)
-        heading = heading if heading >= 0 else 360 + heading
-        return heading
+    def get_heading(self) -> float:
+        """Get entity heading (yaw).
 
-    def get_roll_pitch_yaw(self):
-        """Return a vector containing roll, pitch and yaw in decimal degrees.
-        Note that X, Y, Z can't be 0,0,0."""
-        gps = opendis.RangeCoordinates.GPS()
-        location    = entityManager.EntityManager().get_entity_location()
-        orientation = entityManager.EntityManager().get_entity_orientation()
-        roll, pitch, yaw = gps.ecef2llarpy(location.x, location.y, location.z,
-                                           orientation.psi, orientation.theta, orientation.phi)[3:]
-        return [rad2deg(roll), rad2deg(pitch), rad2deg(yaw)]
+        :return: Heading in decimal degrees [0,360).
+        """
+        psi = EntityManager().get_entity_orientation().psi
+        deg = math.degrees(psi)
+        return deg % 360
+
+    def get_roll_pitch_yaw(self) -> tuple:
+        """Get entity roll, pitch, and yaw.
+
+        :return: roll, pitch and yaw in decimal degrees.
+        """
+        e = EntityManager().get_entity_orientation()
+        return (math.degrees(e.phi), math.degrees(e.theta), math.degrees(e.psi))
 
     def get_speed(self):
-        """Returns speed in m/s."""
-        speed = entityManager.EntityManager().get_entity_linear_velocity()
+        """Get entity speed in m/s.
+
+        :return: Speed in meters per second.
+        """
+        speed = EntityManager().get_entity_linear_velocity()
         return math.sqrt(speed.x**2 + speed.y**2 + speed.z**2)
 
-    def process_kinematics(self, dt):
+    def process_kinematics(self, dt:float) -> float:
         """
-        :param dt: Time elapsed since last update in seconds.
-        Does not calculate new Altitude.
+        Update entity position and altitude along kinematics for elapsed time.
 
-        Return traveled distance in meters.
+        :param dt: Time elapsed since last update in seconds.
         """
-        lat_d, lon_d, alt = self.get_lat_lon_alt()
-        current_lat = deg2rad(lat_d)
-        current_lon = deg2rad(lon_d)
-        heading = deg2rad(self.get_heading())
+        lat, lon, alt = self.get_lat_lon_alt()
+        orientation = EntityManager().get_entity_orientation()
+        heading = orientation.psi
+        pitch   = orientation.theta
         speed   = self.get_speed()
 
-        distance = (speed * dt) / (opendis.RangeCoordinates.WGS84().a)
-        new_lat = math.asin(math.sin(current_lat) * math.cos(distance) + math.cos(current_lat) * \
-                            math.sin(distance) * math.cos(heading))
-        new_lon = current_lon + math.atan2(math.sin(heading) * math.sin(distance) * \
-                                           math.cos(current_lat), math.cos(distance) - \
-                                           math.sin(current_lat) * math.sin(new_lat))
+        # Compute horizontal and vertical distances
+        horiz_dist = speed * math.cos(pitch) * dt  # ground distance
+        vert_dist  = speed * math.sin(pitch) * dt  # altitude change (positive up)
 
-        gps = opendis.RangeCoordinates.GPS()
-        location = Vector3Double() 
-        location.x, location.y, location.z = gps.lla2ecef([rad2deg(new_lat), rad2deg(new_lon), alt])
-        entityManager.EntityManager().set_entity_location(location)
+        # Horizontal movement via great-circle arc
+        arc = horiz_dist / self._wgs84.a
+        lat = math.radians(lat)
+        lon = math.radians(lon)
 
-        return (speed * dt)
+        new_lat_rad = math.asin(math.sin(lat)*math.cos(arc) + 
+                                math.cos(lat)*math.sin(arc)*math.cos(heading))
+        
+        new_lon_rad = lon + math.atan2(math.sin(heading)*math.sin(arc)*math.cos(lat),
+                                       math.cos(arc) - math.sin(lat)*math.sin(new_lat_rad))
+
+        # Convert back to geodetic degrees
+        new_lat = math.degrees(new_lat_rad)
+        new_lon = (math.degrees(new_lon_rad) + 360) % 360
+        new_alt = alt + vert_dist
+
+        # Update ECEF position
+        x, y, z = self._gps.lla2ecef([new_lat, new_lon, new_alt])
+        location = Vector3Double()
+        location.x, location.y, location.z = x, y, z
+        EntityManager().set_entity_location(location)
