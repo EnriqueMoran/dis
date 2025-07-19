@@ -15,10 +15,10 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./logs:/app/logs
 
-  tanksimulator:
+  vehiclesimulator:
     build:
       context: .
-      dockerfile: ./TankSimulator/Dockerfile
+      dockerfile: ./VehicleSimulator/Dockerfile
       args:
         INSTALL_LIB: 1
     network_mode: "host"

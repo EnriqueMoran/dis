@@ -12,5 +12,3 @@ def run_kinematics_tests():
     print("Set speed test passed. OK")
     test.test_process_kinematics
     print("Process kinematics test passed. OK")
-    
-    

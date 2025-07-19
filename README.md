@@ -21,15 +21,15 @@ Allows to Start, stop, resume and terminate exercises.
 - 2023/03/10: Version 0.1, basic functionalities implemented. Allows to manage exercise status.
 
 
-### Tank Simulator
+### Vehicle Simulator
 
-Simulate generic tank components and basic behaviour.
+Provides a basic vehicle framework and generic behaviour.
 
 #### Specific Behavior
 
 - Received PDUs with fields *exerciseID*, *applicationID* and *siteID* that are not listed in *cfg/pdu_filter.json* won't be processed.
   
-- This simulator will set the inicial navigation values (position, heading, speed, etc) once a valid EntityStatePDU referencing the own tank is received (an processed), this means a ESPDU cointaing the same value of entityID as configured.
+- This simulator will set the inicial navigation values (position, heading, speed, etc) once a valid EntityStatePDU referencing the own vehicle is received (and processed), this means a ESPDU cointaing the same value of entityID as configured.
 
 #### Changelog
 

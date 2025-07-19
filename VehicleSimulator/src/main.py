@@ -15,7 +15,7 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "DEBUG"),
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(os.path.join(log_dir, "tanksimulator.log"), mode="a")
+        logging.FileHandler(os.path.join(log_dir, "vehiclesimulator.log"), mode="a")
     ],
 )
 
@@ -23,11 +23,11 @@ logger = logging.getLogger("Main")
 
 class MainApp:
 
-    def __init__(self):
+    def __init__(self) -> None:
         """TBD"""
         self.systems_manager = systemsManager.SystemsManager()
     
-    def run(self):
+    def run(self) -> None:
         self.systems_manager.run()
 
 if __name__ == "__main__":

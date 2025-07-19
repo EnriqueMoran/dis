@@ -8,7 +8,7 @@ from opendis.dis7 import EngineFuel, EngineFuelReload
 
 class FuelManager:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.engine_fuel = EngineFuel()
         self.engine_fuel.fuelMeasurementUnits = 1         # Liter
         self.engine_fuel.fuelType = 2                     # Diesel fuel
@@ -18,7 +18,7 @@ class FuelManager:
         self.initial_fuel_quantity = 0                    # Liter
         self.read_config()
 
-    def read_config(self):
+    def read_config(self) -> None:
         """
         Read and process configuration file.
         """
@@ -34,7 +34,7 @@ class FuelManager:
         self.engine_fuel_reload.standardQuantity = self.engine_fuel_reload.maximumQuantity
         self.engine_fuel_reload.standardQuantityReloadTime = self.engine_fuel_reload.maximumQuantityReloadTime
 
-    def process_fuel_consumption(self, distance_traveled):
+    def process_fuel_consumption(self, distance_traveled: float) -> None:
         """
         :params distance_traveled: distance traveled in meters.
         """
@@ -42,7 +42,7 @@ class FuelManager:
         remaining_fuel = self.engine_fuel.fuelQuantity - consumed_fuel
         self.engine_fuel.fuelQuantity = remaining_fuel if remaining_fuel >= 0 else 0
     
-    def add_fuel(self, fuel_quantity):
+    def add_fuel(self, fuel_quantity: float) -> float:
         """
         Return the excess of fuel.
         """
@@ -53,5 +53,5 @@ class FuelManager:
             self.engine_fuel.fuelQuantity = self.engine_fuel_reload.maximumQuantity
         return excess_fuel
     
-    def reset_fuel(self):
+    def reset_fuel(self) -> None:
         self.engine_fuel.fuelQuantity = self.initial_fuel_quantity

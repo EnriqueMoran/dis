@@ -25,12 +25,12 @@ class ExerciseStatus(Enum):
     PAUSED = 2
     TERMINATED = 3
 
-    def to_string(self):
+    def to_string(self) -> str:
         return self.name
 
 class SimulationManager:
 
-    def __init__(self, kinematics_system=None):
+    def __init__(self, kinematics_system=None) -> None:
         self.exercise_time = 0
         self.exercise_status = ExerciseStatus.UNINITIALIZED
         self.multicast_manager = None
@@ -48,13 +48,13 @@ class SimulationManager:
         self.listen_to_pdu()
         self.emit_entity_pdus()
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.recv_pdu_thread:
             self.recv_pdu_thread.join()
         if self.send_pdu_thread:
             self.send_pdu_thread.join()
 
-    def read_config(self):
+    def read_config(self) -> None:
         """
         Read and process configuration file.
         """
@@ -86,18 +86,18 @@ class SimulationManager:
         self.multicast_manager.create_connection()
         self.multicast_manager.add_listener(self)
 
-    def listen_to_pdu(self):
+    def listen_to_pdu(self) -> None:
         self.recv_pdu_thread = threading.Thread(target=self.multicast_manager.receive_pdu)
         self.recv_pdu_thread.start()
     
-    def emit_entity_pdus(self):
+    def emit_entity_pdus(self) -> None:
         """
         Initialize ESPDU emitting thread.
         """
         self.send_pdu_thread = threading.Thread(target=self.send_entity_pdus)
         self.send_pdu_thread.start()
     
-    def send_entity_pdus(self):
+    def send_entity_pdus(self) -> None:
         """
         Send ESPDU periodically.
         """
@@ -107,7 +107,7 @@ class SimulationManager:
                     self.send_entity_state_pdu()
             time.sleep(1 / self.message_frequency)
 
-    def on_pdu_received(self, pdu):
+    def on_pdu_received(self, pdu: EntityStatePdu) -> None:
         if self.can_process_pdu(pdu):
             logger.debug("Processing %s", pdu.__class__.__name__)
             if PduTypeDecoders[pdu.pduType] == PduTypeDecoders[13]:      # PduTypeDecoders.StartResumePdu
@@ -127,7 +127,7 @@ class SimulationManager:
                     entityManager.EntityManager().set_data(pdu)
                     self._data_initialized = True
 
-    def can_process_pdu(self, pdu):
+    def can_process_pdu(self, pdu: EntityStatePdu) -> bool:
         """
         Return True if pdu can be processed, False otherwise.
         """
@@ -152,7 +152,7 @@ class SimulationManager:
             logger.debug("PDU does not match filters, won't be processed.")
         return can_be_processed
 
-    def send_entity_state_pdu(self):
+    def send_entity_state_pdu(self) -> None:
         entity_system = entityManager.EntityManager()    # Singleton
         pdu = EntityStatePdu()
         pdu.exerciseID = self.exercise_id

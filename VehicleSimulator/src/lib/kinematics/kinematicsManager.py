@@ -10,7 +10,7 @@ __author__ = "EnriqueMoran"
 
 class KinematicsManager:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._gps   = opendis.RangeCoordinates.GPS()
         self._wgs84 = opendis.RangeCoordinates.WGS84()
 
@@ -19,7 +19,7 @@ class KinematicsManager:
         self.set_position(lat, lon, alt)
         self.set_orientation(roll, pitch, yaw)
         
-    def get_information(self):
+    def get_information(self) -> str:
         """TBD
         Note that X, Y, Z can't be 0,0,0.
         """
@@ -32,7 +32,7 @@ class KinematicsManager:
                 f"heading: {heading} degrees\n" +\
                 f"speed: {speed} m/s"
 
-    def set_orientation(self, roll:float, pitch:float, yaw:float):
+    def set_orientation(self, roll: float, pitch: float, yaw: float) -> None:
         """
         Set entity orientation in EulerAngles.
         
@@ -46,7 +46,7 @@ class KinematicsManager:
         orientation.psi   = math.radians(yaw)
         EntityManager().set_entity_orientation(orientation)
     
-    def set_position(self, lat:float, lon:float, alt:float):
+    def set_position(self, lat: float, lon: float, alt: float) -> None:
         """
         Set entity position (geodetic -> ECEF).
         
@@ -58,7 +58,7 @@ class KinematicsManager:
         location.x, location.y, location.z = self._gps.lla2ecef([lat, lon, alt])
         EntityManager().set_entity_location(location)
 
-    def set_speed(self, speed:float):
+    def set_speed(self, speed: float) -> None:
         """"
         Set local NED speed and convert to ECEF.
 
@@ -83,7 +83,7 @@ class KinematicsManager:
         velocity.x, velocity.y, velocity.z = vx, vy, vz
         EntityManager().set_entity_linear_velocity(velocity)
     
-    def set_heading(self, heading:float):
+    def set_heading(self, heading: float) -> None:
         """
         Update entity heading (yaw only).
 
@@ -118,7 +118,7 @@ class KinematicsManager:
         e = EntityManager().get_entity_orientation()
         return (math.degrees(e.phi), math.degrees(e.theta), math.degrees(e.psi))
 
-    def get_speed(self):
+    def get_speed(self) -> float:
         """Get entity speed in m/s.
 
         :return: Speed in meters per second.
@@ -126,7 +126,7 @@ class KinematicsManager:
         speed = EntityManager().get_entity_linear_velocity()
         return math.sqrt(speed.x**2 + speed.y**2 + speed.z**2)
 
-    def process_kinematics(self, dt:float) -> float:
+    def process_kinematics(self, dt: float) -> None:
         """
         Update entity position and altitude along kinematics for elapsed time.
 

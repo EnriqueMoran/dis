@@ -10,8 +10,13 @@ from opendis.DataOutputStream import DataOutputStream
 
 class MulticastManager:
     """TBD"""
-    def __init__(self, multicast_group="0.0.0.0", multicast_port=3000, multicast_iface='0.0.0.0',
-                 ttl=2):
+    def __init__(
+        self,
+        multicast_group: str = "0.0.0.0",
+        multicast_port: int = 3000,
+        multicast_iface: str = "0.0.0.0",
+        ttl: int = 2,
+    ) -> None:
         self.multicast_group = multicast_group
         self.multicast_port = multicast_port
         self.multicast_iface = multicast_iface
@@ -19,7 +24,7 @@ class MulticastManager:
         self.sock = None
         self.listeners = []
 
-    def create_connection(self):
+    def create_connection(self) -> None:
         """TBD"""
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, self.ttl)
@@ -29,7 +34,7 @@ class MulticastManager:
                               socket.inet_aton(self.multicast_iface))
         self.sock.bind((self.multicast_group, self.multicast_port))
 
-    def send_pdu(self, pdu):
+    def send_pdu(self, pdu) -> None:
         """TBD"""
         memory_stream = BytesIO()
         output_stream = DataOutputStream(memory_stream)
@@ -37,10 +42,10 @@ class MulticastManager:
         data = memory_stream.getvalue()
         self.sock.sendto(data, (self.multicast_group, self.multicast_port))
     
-    def add_listener(self, listener):
+    def add_listener(self, listener) -> None:
         self.listeners.append(listener)
     
-    def receive_pdu(self):
+    def receive_pdu(self) -> None:
         """TBD"""
         while True:
             data = self.sock.recv(1024)

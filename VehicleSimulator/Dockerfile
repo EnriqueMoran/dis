@@ -11,10 +11,10 @@ ARG INSTALL_LIB=${INSTALL_LIB}
 WORKDIR /app
 ENV LOG_DIR=/app/logs
 RUN mkdir -p $LOG_DIR
-COPY ./TankSimulator/requirements.txt .
-COPY ./TankSimulator/src .
-COPY ./TankSimulator/cfg .
-COPY ./TankSimulator/tests .
+COPY ./VehicleSimulator/requirements.txt .
+COPY ./VehicleSimulator/src .
+COPY ./VehicleSimulator/cfg .
+COPY ./VehicleSimulator/tests .
 
 # Install pip requirements
 RUN python -m pip install -r requirements.txt

@@ -1,4 +1,4 @@
-"""This class is responsible for managing all the systems that constitute and define the operation of the tank."""
+"""Manage the different systems that define the basic operation of a vehicle."""
 
 import threading
 import time
@@ -10,7 +10,7 @@ from lib.simulation import simulationManager
 
 class SystemsManager:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.entity_system = entityManager.EntityManager()
         self.fuel_system = fuelManager.FuelManager()
         self.kinematics_system = kinematicsManager.KinematicsManager()
@@ -25,11 +25,11 @@ class SystemsManager:
         self.simulation_freq = 1000    # ms
         self.execution_thread = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.execution_thread:
             self.execution_thread.join()
     
-    def _simulation_tick(self):
+    def _simulation_tick(self) -> None:
         while True:
             if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
                 self.exercise_time += 1
@@ -39,7 +39,7 @@ class SystemsManager:
                 self.fuel_system.reset_fuel()
                 self.exercise_time = 0
 
-    def run(self):
+    def run(self) -> None:
         self.simulation_system.listen_to_pdu()
         self.execution_thread = threading.Thread(target=self._simulation_tick)
         self.execution_thread.start()
