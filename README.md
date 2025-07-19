@@ -1,6 +1,7 @@
 # DIS
 
-Suite of entity simulators and exercise tools designed to run wargames using the DIS7 standard (*SISO-REF-010-00v20-0, 19 November 2013*). Includes simulators for tanks, warships, troops, and fighter aircraft, as well as exercise management tools, scenario generators, and exercise visualizers.
+Suite of DIS-compliant simulation tools implementing the IEEE Std 1278.1-2012 Application Protocols and SISO-REF-010-2020 Enumerations for Simulation Interoperability. Includes entity simulators (tanks, warships, troops, fighter aircraft), exercise control utilities, scenario generators and visualizers. Full PDU field definitions are taken from IEEE 1278.1-2012; all enumeration values and bit-fields follow SISO-REF-010-2020 Version 28. Reference PDUs and enumeration tables are available online via NPS:
+https://faculty.nps.edu/brutzman/vrtp/mil/navy/nps/disEnumerations/JdbeHtmlFiles/pdu/index.htm.
 
 Each simulator and tool is dockerized.
 
