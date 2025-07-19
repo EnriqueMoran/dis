@@ -22,6 +22,7 @@ class SystemsManager:
         self.physic_system = None
 
         self.exercise_time = 0    # Exercise time in ms
+        self.simulation_freq = 1000    # ms
         self.execution_thread = None
 
     def __del__(self):
@@ -29,25 +30,14 @@ class SystemsManager:
             self.execution_thread.join()
     
     def _simulation_tick(self):
-        simulation_frequency = 1000    # ms
         while True:
             if self.simulation_system.exercise_status == simulationManager.ExerciseStatus.RUNNING:
-                self._process_movement(simulation_frequency)
-
-                #print(self.kinematics_system.get_information())
-                #print("Current fuel: " + str(self.fuel_system.engine_fuel.fuelQuantity))
-
                 self.exercise_time += 1
-                time.sleep(simulation_frequency / 1000)
+                time.sleep(self.simulation_freq / 1000)
             elif self.simulation_system.exercise_status == simulationManager.ExerciseStatus.TERMINATED:
                 self.entity_system.reset_data()
                 self.fuel_system.reset_fuel()
                 self.exercise_time = 0
-    
-    def _process_movement(self, simulation_frequency):
-        if self.fuel_system.engine_fuel.fuelQuantity > 0:
-            distance_traveled = self.kinematics_system.process_kinematics(simulation_frequency / 1000)
-            self.fuel_system.process_fuel_consumption(distance_traveled)
 
     def run(self):
         self.simulation_system.listen_to_pdu()
